@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-
 import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_OPEN, SET_DIALOG_CLOSE, UPDATE_PRODUCT, SET_USER, UPDATE_ROLES } from './constants';
 
 // Define Role Types
