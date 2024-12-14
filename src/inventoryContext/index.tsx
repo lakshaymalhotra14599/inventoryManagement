@@ -5,7 +5,6 @@ const RoleContext = createContext<{
   state: State;
   dispatch: React.Dispatch<Action>;
 } | null>(null);
-// why null ?
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);

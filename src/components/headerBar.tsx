@@ -4,7 +4,6 @@ import { RoleType } from '../inventoryReducer/index';
 import { SET_USER } from '../inventoryReducer/constants';
 import { useRoleContext } from '../hooks/useRoleContext';
 
-
 const HeaderBar: React.FC = () => {
     const { state, dispatch } = useRoleContext();
     const handleToggle = () => {
@@ -16,7 +15,7 @@ const HeaderBar: React.FC = () => {
       };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: 'black' }}> 
       <Toolbar>
         <Box display="flex" alignItems="center">
           <Typography variant="body1" sx={{ marginRight: 1 }}>

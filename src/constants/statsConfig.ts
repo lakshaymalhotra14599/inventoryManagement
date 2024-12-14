@@ -2,36 +2,36 @@ import { ReactNode } from 'react';
 
 export interface CardData {
   text: string;
-  value: (data: any) => string | number;
+  value: (data: string | number) => string | number; 
   icon?: ReactNode;
   className?: string;
   key: string;
-  lookupKey: string; 
+  lookupKey: string;
 }
 
 export const cardData: CardData[] = [
   {
     text: 'Total Products',
-    value: (data) => data.length,
+    value: (data) => Array.isArray(data) ? data.length : 0, 
     key: 'total-products',
-    lookupKey: 'data', 
+    lookupKey: 'data',
   },
   {
     text: 'Total Store Value',
-    value: (data) => `${data}`,
+    value: (data) => `${data}`, 
     key: 'total-store-value',
-    lookupKey: 'totalStoreValue', 
+    lookupKey: 'totalStoreValue',
   },
   {
     text: 'Out of Stock',
-    value: (data) => parseInt(data , 10),
+    value: (data) => !isNaN(Number(data)) ? parseInt(String(data), 10) : 0, 
     key: 'out-of-stock',
-    lookupKey: 'outOfStock', 
+    lookupKey: 'outOfStock',
   },
   {
     text: 'Categories',
-    value: (data) => data,
+    value: (data) => data || 'N/A', 
     key: 'categories',
-    lookupKey: 'categories', 
+    lookupKey: 'categories',
   },
 ];

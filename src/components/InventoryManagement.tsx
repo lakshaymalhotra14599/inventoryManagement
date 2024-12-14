@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 // Context
 import { useRoleContext } from "../hooks/useRoleContext"
 
 // Constants
-import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_OPEN, SET_DIALOG_CLOSE, UPDATE_PRODUCT } from '../inventoryReducer/constants';
+import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_CLOSE, UPDATE_PRODUCT } from '../inventoryReducer/constants';
 import { inventoryColumnConfig } from '../constants/columnConfig';
 
 // Service
@@ -17,18 +17,13 @@ import withRoleBasedActions from './table/withRoleBasedActoins';
 import BaseTable from './table';
 import StatsCards from './statsCard';
 import ProductEditDialog from './ProductEditDailog';
+import { InventoryItem } from '../inventoryReducer';
 
 const RoleBasedTable = withRoleBasedActions(BaseTable);
 
 const InventoryManagement: React.FC = () => {
   const { state, dispatch } = useRoleContext();
   const { data  , loading} = state.inventory 
-//   const dataWithUniqueIds = useMemo(() => {
-//     return data.map((item, index) => ({
-//       ...item,
-//       id: index, 
-//     }));
-//   }, [data]); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,8 +32,9 @@ const InventoryManagement: React.FC = () => {
         try {
           const data = await inventoryService.getInventory();
           dispatch({ type: SET_DATA, payload: data });
-        } catch (error) {
-          dispatch({ type: SET_ERROR, payload: error.message });
+        } catch (error : unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+          dispatch({ type: SET_ERROR, payload: errorMessage });
         } finally {
           dispatch({ type: SET_LOADING, payload: false });
         }
@@ -46,19 +42,14 @@ const InventoryManagement: React.FC = () => {
     };
 
     fetchData();
-  }, [data, dispatch]); // Ensure the effect is only triggered when necessary
+  }, [data, dispatch]); 
 
-  const handleRowClick = (row: any) => {
-    console.log("row clicked")
-    dispatch({ type: SET_DIALOG_OPEN, payload: row });
-  };
 
   const handleDialogClose = () => {
     dispatch({ type: SET_DIALOG_CLOSE });
   };
 
-  const handleSaveProduct = (updatedProduct: any) => {
-    console.log("on save " , updatedProduct)
+  const handleSaveProduct = (updatedProduct: InventoryItem) => {
     dispatch({ type: UPDATE_PRODUCT, payload: updatedProduct });
   };
 
@@ -70,7 +61,6 @@ const InventoryManagement: React.FC = () => {
         role={state.currentUser.role} 
         columns={inventoryColumnConfig} 
         loading={loading} 
-        onRowClick={(params : any) => handleRowClick(params.row)}
         dispatch={dispatch} 
         />
       <ProductEditDialog

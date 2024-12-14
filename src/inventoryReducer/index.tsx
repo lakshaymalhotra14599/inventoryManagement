@@ -19,13 +19,12 @@ export interface User {
   role: RoleType;           
 }
 
-// Inventory and Dialog State Interface
 export interface InventoryState {
-  data: any[];
+  data: InventoryItem[];
   loading: boolean;
   error: string | null;
   dialogOpen: boolean;
-  selectedProduct: any;
+  selectedProduct: InventoryItem | null;
   totalStoreValue: number;
   outOfStock: number;
   categories: number;
@@ -38,16 +37,25 @@ export interface State {
   inventory: InventoryState;
 }
 
+export interface InventoryItem {
+  name: string;
+  category: string;
+  value: string;
+  quantity: number; 
+  price: string;
+  id?: string;
+}
+
 // Action Type
 export type Action =
   | { type: typeof SET_USER; payload: User }
   | { type: typeof UPDATE_ROLES; payload: Role[] }
-  | { type: typeof SET_DATA; payload: any[] }
+  | { type: typeof SET_DATA; payload: InventoryItem[] }
   | { type: typeof SET_LOADING; payload: boolean }
   | { type: typeof SET_ERROR; payload: string | null }
-  | { type: typeof SET_DIALOG_OPEN; payload: any }
+  | { type: typeof SET_DIALOG_OPEN; payload: InventoryItem }
   | { type: typeof SET_DIALOG_CLOSE }
-  | { type: typeof UPDATE_PRODUCT; payload: any }
+  | { type: typeof UPDATE_PRODUCT; payload: InventoryItem }
   | { type: 'RESET_STATE' };
 
 // Initial State
@@ -126,7 +134,8 @@ export const reducer = (state: State, action: Action): State => {
       };
     case UPDATE_PRODUCT: {
         const updatedData = state.inventory.data.map((item) =>
-          item.id === action.payload.id ? { ...item, ...action.payload, id: uuidv4() , quantity : parseInt(action.payload.quantity , 10) } : item
+          { // @ts-expect-error err
+            return item.id === action.payload.id ? { ...item, ...action.payload, id: uuidv4() , quantity : parseInt(action.payload.quantity , 10) } : item}
         );
         console.log(updatedData)
         const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData);
@@ -157,7 +166,7 @@ export const reducer = (state: State, action: Action): State => {
 
 
 // Helper function to recalculate totals, outOfStock, and categories
-const recalculateInventoryMetrics = (data: any[]) => {
+const recalculateInventoryMetrics = (data: InventoryItem[]) => {
   let totalStoreValue = 0;
   let outOfStock = 0;
   const categorySet = new Set<string>();

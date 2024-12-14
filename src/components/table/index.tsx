@@ -1,19 +1,19 @@
 import React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { InventoryItem } from '../../inventoryReducer';
 
 const BaseTable: React.FC<{ 
-  data: any[]; 
-  columns: any[]; 
+  data: InventoryItem[]; 
+  columns: GridColDef[]; 
   loading: boolean; 
-  onRowClick: (params: any) => void; 
-}> = ({ data, columns, loading, onRowClick }) => {  
+}> = ({ data, columns, loading }) => {  
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid 
         rows={data} 
         columns={columns} 
         loading={loading} 
-        onRowClick={onRowClick}  
+        paginationModel={{ page: 0, pageSize: data.length}} 
       />
     </div>
   );

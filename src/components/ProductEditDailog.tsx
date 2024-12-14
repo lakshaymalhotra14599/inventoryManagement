@@ -1,34 +1,33 @@
-// ProductEditDialog.tsx
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 import { useRoleContext } from '../hooks/useRoleContext';
+import { InventoryItem } from '../inventoryReducer';
 
 interface ProductEditDialogProps {
   onClose: () => void;
-  onSave: (updatedProduct: any) => void;
+  onSave: (updatedProduct: InventoryItem) => void;
 }
 
 const ProductEditDialog: React.FC<ProductEditDialogProps> = ({ onClose, onSave }) => {
-    const {state} =  useRoleContext() ;
-    const { dialogOpen , selectedProduct} = state.inventory ;
+  const { state } = useRoleContext();
+  const { dialogOpen, selectedProduct } = state.inventory;
 
-    const [formData, setFormData] = useState<any>(selectedProduct);
+  const [formData, setFormData] = useState<InventoryItem | null>(selectedProduct);
 
   useEffect(() => {
-    setFormData(selectedProduct); // Reset form data when selectedProduct changes
+    setFormData(selectedProduct); 
   }, [selectedProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) =>
+      prevData ? { ...prevData, [name]: value } : null
+    );
   };
 
   const handleSave = () => {
     if (formData) {
-      onSave(formData); // Pass the updated product data back to parent
+      onSave(formData); 
     }
   };
 

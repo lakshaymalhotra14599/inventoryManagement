@@ -6,9 +6,10 @@ import { useRoleContext } from '../hooks/useRoleContext';
 const StatsCards = () => {
   const { state } = useRoleContext();
   const { inventory } = state;
-  const { data  , loading , totalStoreValue , outOfStock , categories} = inventory
-  useEffect(()=>{
-  },[totalStoreValue , outOfStock , categories])
+  const { data, loading, totalStoreValue, outOfStock, categories } = inventory;
+
+  useEffect(() => {}, [totalStoreValue, outOfStock, categories]);
+
   const renderCard = ({
     text,
     lookupKey,
@@ -17,13 +18,11 @@ const StatsCards = () => {
     className,
     key,
   }: CardData) => {
-
-    const cardValue = inventory[lookupKey] ?? data.length; 
-
-
+    // @ts-expect-error err
+    const cardValue = inventory[lookupKey] ?? data.length;
 
     return (
-      <Grid item xs={12} sm={6} md={3} key={key}>
+      <Grid item xs={12} sm={6} md={3} key={key} sx={{ mb: 2 }}>
         <Card className={className}>
           <CardContent>
             <Typography variant="h6">{text}</Typography>
@@ -41,7 +40,7 @@ const StatsCards = () => {
     return (
       <Grid container spacing={2}>
         {Array.from({ length: 4 }).map((_, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid item xs={12} sm={6} md={3} key={index} sx={{ mb: 2 }}>
             <Card>
               <CardContent>
                 <Skeleton variant="text" height={40} width="60%" />
