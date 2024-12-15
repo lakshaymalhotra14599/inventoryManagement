@@ -62,7 +62,7 @@ const InventoryManagement: React.FC = () => {
         columns={inventoryColumnConfig} 
         loading={loading} 
         dispatch={dispatch} 
-        // disbaledIds={state.inventory.disabledIds}
+        disabledIds={state.inventory.disabledIds}
         />
       <ProductEditDialog
         onClose={handleDialogClose}

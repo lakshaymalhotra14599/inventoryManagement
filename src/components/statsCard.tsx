@@ -6,9 +6,9 @@ import { useRoleContext } from '../hooks/useRoleContext';
 const StatsCards = () => {
   const { state } = useRoleContext();
   const { inventory } = state;
-  const { data, loading, totalStoreValue, outOfStock, categories } = inventory;
+  const { data, loading, totalStoreValue, outOfStock, categories , disabledIds } = inventory;
 
-  useEffect(() => {}, [totalStoreValue, outOfStock, categories]);
+  useEffect(() => {}, [totalStoreValue, outOfStock, categories , disabledIds]);
 
   const renderCard = ({
     text,

@@ -12,7 +12,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Action, InventoryItem, RoleType } from '../../inventoryReducer';
 
 // Constants
-import { DELETE_PRODUCT, SET_DIALOG_OPEN } from '../../inventoryReducer/constants';
+import { DELETE_PRODUCT, DISBALE_PRODUCT, SET_DIALOG_OPEN } from '../../inventoryReducer/constants';
 
 
 interface WithRoleBasedActionsProps {
@@ -21,14 +21,14 @@ interface WithRoleBasedActionsProps {
   columns: GridColDef[];
   loading: boolean;
   dispatch: React.Dispatch<Action>;
-  disabledIds? : Set<string>
+  disabledIds : Set<string>
 }
 
 const withRoleBasedActions = (
-  WrappedComponent: React.FC<{ data: InventoryItem[]; columns: GridColDef[]; loading: boolean }>
+  WrappedComponent: React.FC<{ data: InventoryItem[]; columns: GridColDef[]; loading: boolean ; disabledIds : Set<string> }>
 ) => {
   return (props: WithRoleBasedActionsProps) => {
-    const { role, data, columns, loading, dispatch  } = props;
+    const { role, data, columns, loading, dispatch , disabledIds } = props;
 
     const handleEditClick = (row: InventoryItem) => {
       dispatch({ type: SET_DIALOG_OPEN, payload: row });
@@ -36,6 +36,10 @@ const withRoleBasedActions = (
 
     const handleDeleteClick=(row : InventoryItem) => {
         dispatch({type : DELETE_PRODUCT , payload : row.id})
+    }
+
+    const handleDisableClick = (row : InventoryItem) => {
+        dispatch({type : DISBALE_PRODUCT , payload : row.id})
     }
 
     const getActionsForRole = (row: InventoryItem) => {
@@ -54,10 +58,10 @@ const withRoleBasedActions = (
           </IconButton>
           <IconButton
             disabled={isDisabled}
-            onClick={() => !isDisabled && alert(`Disable ${row.name}`)}
+            onClick={() => !isDisabled && handleDisableClick(row)}
             style={{ marginRight: '0.5rem' }}
           >
-            { isDisabled ? <VisibilityOffIcon /> : <VisibilityIcon/>}
+            { isDisabled || (row.id && disabledIds.has(row.id)) ? <VisibilityOffIcon /> : <VisibilityIcon/>}
           </IconButton>
           <IconButton
             disabled={isDisabled}
@@ -80,7 +84,7 @@ const withRoleBasedActions = (
       },
     ];
 
-    return <WrappedComponent data={data} columns={roleBasedColumns} loading={loading} />;
+    return <WrappedComponent data={data} columns={roleBasedColumns} loading={loading} disabledIds={disabledIds}/>;
   };
 };
 

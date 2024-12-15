@@ -62,3 +62,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+.disableCol{
+  color: #b0b0b0; 
+  opacity: 0.6;  
+  pointer-events: none; 
+}
+

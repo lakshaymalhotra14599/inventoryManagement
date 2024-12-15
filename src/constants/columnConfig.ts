@@ -1,4 +1,5 @@
-export const inventoryColumnConfig = [
+
+export const inventoryColumnConfig= [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'category', headerName: 'Category', flex: 1 },
     { field: 'value', headerName: 'Value', flex: 1 },

@@ -58,7 +58,7 @@ export type Action =
   | { type: typeof SET_DIALOG_CLOSE }
   | { type: typeof UPDATE_PRODUCT; payload: InventoryItem }
   | { type: typeof DELETE_PRODUCT; payload: string | undefined } 
-  | { type: typeof DISBALE_PRODUCT; payload: string }
+  | { type: typeof DISBALE_PRODUCT; payload: string | undefined }
   | { type: 'RESET_STATE' };
 
 // Initial State
@@ -99,7 +99,7 @@ export const reducer = (state: State, action: Action): State => {
           id: uuidv4()
         }));
         
-        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(dataWithIds);
+        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(dataWithIds , state.inventory.disabledIds);
   
         return {
           ...state,
@@ -141,7 +141,7 @@ export const reducer = (state: State, action: Action): State => {
           { // @ts-expect-error err
             return item.id === action.payload.id ? { ...item, ...action.payload, id: uuidv4() , quantity : parseInt(action.payload.quantity , 10) } : item}
         );
-        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData);
+        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData , state.inventory.disabledIds);
   
         if (JSON.stringify(updatedData) !== JSON.stringify(state.inventory.data)) {
           return {
@@ -165,7 +165,7 @@ export const reducer = (state: State, action: Action): State => {
           (item) => item.id !== action.payload
         );
       
-        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(filteredData);
+        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(filteredData ,  state.inventory.disabledIds);
       
         return {
           ...state,
@@ -180,27 +180,38 @@ export const reducer = (state: State, action: Action): State => {
       }
       case DISBALE_PRODUCT: {
         const disabledIds = new Set(state.inventory.disabledIds);
-        disabledIds.add(action.payload);
-  
-        const updatedData = state.inventory.data.map((item) =>
-          item.id === action.payload ? { ...item, disabled: true } : item
-        );
-  
-        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData);
-        
-        return {
-          ...state,
-          inventory: {
-            ...state.inventory,
-            data: updatedData,
-            totalStoreValue,
-            outOfStock,
-            categories,
-            disabledIds,
-          },
-        };
+      
+        if (action.payload && typeof action.payload === 'string') {
+          if (disabledIds.has(action.payload)) {
+            disabledIds.delete(action.payload);
+          } else {
+            disabledIds.add(action.payload);
+          }
+      
+          const updatedData = state.inventory.data.map((item) =>
+            item.id === action.payload
+              ? { ...item, disabled: action.payload && disabledIds.has(action.payload) }
+              : item
+          );
+      
+          const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData, disabledIds);
+      
+          return {
+            ...state,
+            inventory: {
+              ...state.inventory,
+              data: updatedData,
+              totalStoreValue,
+              outOfStock,
+              categories,
+              disabledIds,
+            },
+          };
+        }
+      
+        return state; 
       }
-          
+      
     case 'RESET_STATE':
       return initialState;
     default:
@@ -210,12 +221,15 @@ export const reducer = (state: State, action: Action): State => {
 
 
 // Helper function to recalculate totals, outOfStock, and categories
-const recalculateInventoryMetrics = (data: InventoryItem[]) => {
+const recalculateInventoryMetrics = (data: InventoryItem[], disabledIds: Set<string>) => {
   let totalStoreValue = 0;
   let outOfStock = 0;
   const categorySet = new Set<string>();
 
-  data.forEach((item) => {
+  const activeItems = data.filter(item => item.id && !disabledIds.has(item.id));
+
+
+  activeItems.forEach((item) => {
     const price = parseFloat(item.value.replace('$', '').replace(',', ''));
     totalStoreValue += price;
 
