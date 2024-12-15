@@ -5,7 +5,7 @@ import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_OPEN, SET_DIALOG_CLOSE, UP
 export type RoleType = 'ADMIN' | 'USER'; 
 
 // Permission Type
-export type Permission = 'ADD' | 'DELETE' | 'HIDE' | 'VIEW';
+export type Permission =  'DELETE' | 'HIDE' | 'VIEW';
 
 // Role Interface
 export interface Role {

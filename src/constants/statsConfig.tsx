@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+
+// Icons
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';

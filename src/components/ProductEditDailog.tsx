@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Grid, Typography } from '@mui/material';
+
+// Hook
 import { useRoleContext } from '../hooks/useRoleContext';
+
+// Type
 import { InventoryItem } from '../inventoryReducer';
 
 interface ProductEditDialogProps {

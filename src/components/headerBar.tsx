@@ -1,7 +1,13 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Switch, Box } from '@mui/material';
+
+// Type
 import { RoleType } from '../inventoryReducer/index'; 
+
+// Constants
 import { SET_USER } from '../inventoryReducer/constants';
+
+// Context
 import { useRoleContext } from '../hooks/useRoleContext';
 
 const HeaderBar: React.FC = () => {
