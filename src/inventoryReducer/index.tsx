@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_OPEN, SET_DIALOG_CLOSE, UPDATE_PRODUCT, SET_USER, UPDATE_ROLES } from './constants';
+import { SET_LOADING, SET_ERROR, SET_DATA, SET_DIALOG_OPEN, SET_DIALOG_CLOSE, UPDATE_PRODUCT, SET_USER, UPDATE_ROLES, DELETE_PRODUCT, DISBALE_PRODUCT } from './constants';
 
 // Define Role Types
 export type RoleType = 'ADMIN' | 'USER'; 
@@ -28,6 +28,7 @@ export interface InventoryState {
   totalStoreValue: number;
   outOfStock: number;
   categories: number;
+  disabledIds: Set<string>; 
 }
 
 // User and Roles State Interface
@@ -56,6 +57,8 @@ export type Action =
   | { type: typeof SET_DIALOG_OPEN; payload: InventoryItem }
   | { type: typeof SET_DIALOG_CLOSE }
   | { type: typeof UPDATE_PRODUCT; payload: InventoryItem }
+  | { type: typeof DELETE_PRODUCT; payload: string | undefined } 
+  | { type: typeof DISBALE_PRODUCT; payload: string }
   | { type: 'RESET_STATE' };
 
 // Initial State
@@ -66,8 +69,8 @@ export const initialState: State = {
     role: "ADMIN",
   },
   roles: [
-    { name: 'ADMIN', permissions: ['ADD', 'DELETE', 'HIDE', 'VIEW'] },
-    { name: 'USER', permissions: ['ADD', 'VIEW'] },
+    { name: 'ADMIN', permissions: [ 'DELETE', 'HIDE', 'VIEW'] },
+    { name: 'USER', permissions: [ 'VIEW'] },
   ],
   inventory: {
     data: [],
@@ -78,6 +81,7 @@ export const initialState: State = {
     totalStoreValue: 0,
     outOfStock: 0,
     categories: 0,
+    disabledIds: new Set(),
   },
 };
 
@@ -92,7 +96,7 @@ export const reducer = (state: State, action: Action): State => {
         // Use the helper function to recalculate inventory metrics
         const dataWithIds = action.payload.map((item) => ({
           ...item,
-          id: uuidv4(),  
+          id: uuidv4()
         }));
         
         const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(dataWithIds);
@@ -137,7 +141,6 @@ export const reducer = (state: State, action: Action): State => {
           { // @ts-expect-error err
             return item.id === action.payload.id ? { ...item, ...action.payload, id: uuidv4() , quantity : parseInt(action.payload.quantity , 10) } : item}
         );
-        console.log(updatedData)
         const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData);
   
         if (JSON.stringify(updatedData) !== JSON.stringify(state.inventory.data)) {
@@ -156,7 +159,48 @@ export const reducer = (state: State, action: Action): State => {
         }
   
         return state;
-      }    
+      }  
+      case DELETE_PRODUCT: {
+        const filteredData = state.inventory.data.filter(
+          (item) => item.id !== action.payload
+        );
+      
+        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(filteredData);
+      
+        return {
+          ...state,
+          inventory: {
+            ...state.inventory,
+            data: filteredData,
+            totalStoreValue,
+            outOfStock,
+            categories,
+          },
+        };
+      }
+      case DISBALE_PRODUCT: {
+        const disabledIds = new Set(state.inventory.disabledIds);
+        disabledIds.add(action.payload);
+  
+        const updatedData = state.inventory.data.map((item) =>
+          item.id === action.payload ? { ...item, disabled: true } : item
+        );
+  
+        const { totalStoreValue, outOfStock, categories } = recalculateInventoryMetrics(updatedData);
+        
+        return {
+          ...state,
+          inventory: {
+            ...state.inventory,
+            data: updatedData,
+            totalStoreValue,
+            outOfStock,
+            categories,
+            disabledIds,
+          },
+        };
+      }
+          
     case 'RESET_STATE':
       return initialState;
     default:

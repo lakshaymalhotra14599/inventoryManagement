@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Grid, Card, CardContent, Typography, Skeleton, Box } from '@mui/material';
-import { cardData, CardData } from '../constants/statsConfig';
+import { cardData, CardData } from '../constants/statsConfig'; // Adjust the import path if needed
 import { useRoleContext } from '../hooks/useRoleContext';
 
 const StatsCards = () => {
@@ -27,7 +27,7 @@ const StatsCards = () => {
           <CardContent>
             <Typography variant="h6">{text}</Typography>
             <Box display="flex" alignItems="center">
-              {icon && <Box mr={1}>{icon}</Box>}
+              {icon && <Box mr={1}>{icon}</Box>} {/* Render the icon */}
               <Typography variant="h4">{value(cardValue)}</Typography>
             </Box>
           </CardContent>

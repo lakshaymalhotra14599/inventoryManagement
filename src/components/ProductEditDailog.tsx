@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Grid, Typography } from '@mui/material';
 import { useRoleContext } from '../hooks/useRoleContext';
 import { InventoryItem } from '../inventoryReducer';
 
@@ -34,39 +34,54 @@ const ProductEditDialog: React.FC<ProductEditDialogProps> = ({ onClose, onSave }
   return (
     <Dialog open={dialogOpen} onClose={onClose}>
       <DialogTitle>Edit Product</DialogTitle>
+      {formData?.name && (
+        <Typography variant="subtitle1" ml={"1.5rem"} >
+          {formData.name}
+        </Typography>
+      )}
       <DialogContent>
-        <TextField
-          label="Category"
-          name="category"
-          value={formData?.category || ''}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Price"
-          name="price"
-          value={formData?.price || ''}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Quantity"
-          name="quantity"
-          value={formData?.quantity || ''}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Value"
-          name="value"
-          value={formData?.value || ''}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              label="Category"
+              name="category"
+              value={formData?.category || ''}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Price"
+              name="price"
+              value={formData?.price || ''}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Quantity"
+              name="quantity"
+              value={formData?.quantity || ''}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Value"
+              name="value"
+              value={formData?.value || ''}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
